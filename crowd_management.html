@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>座席レイアウト</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .room {
+      position: relative;
+      width: 1000px;
+      height: 600px;
+      border: 2px solid black;
+      margin: 20px auto;
+      background-color: #f9f9f9;
+    }
+
+    .dot {
+      position: absolute;
+      width: 48px; /* ここを大きく */
+      height: 48px; /* ここを大きく */
+      border-radius: 50%;
+      background-color: gray;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .dot.red {
+      background-color: red;
+    }
+
+    .dot.xmark::after {
+      content: '×';
+      color: red;
+      font-size: 40px;
+      font-weight: bold;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .wall {
+      position: absolute;
+      background-color: #555;
+    }
+
+    .bath {
+        position: absolute;
+        background-color: white;
+        border: 2px solid black;
+    }
+
+    .hatched {
+      background-image: repeating-linear-gradient(
+        45deg,
+        #ccc,
+        #ccc 5px,
+        transparent 5px,
+        transparent 10px
+      );
+    }
+
+    .label {
+      position: absolute;
+      font-size: 16px;
+      color: black;
+    }
+
+    .corner {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      z-index: 10;
+      /* 目立つ半透明黄色と枠線を削除 */
+      background: transparent;
+      border: none;
+      box-sizing: border-box;
+      pointer-events: auto;
+    }
+
+    .container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .side-info {
+      width: 260px;
+      margin-right: 40px;   /* さらに座席マップ側に寄せる */
+      font-size: 22px;
+      margin-top: 120px;    /* さらに下にずらす */
+      margin-left: 40px;    /* 右に寄せる */
+    }
+    .status-dot {
+      display: inline-block;
+      width: 28px;        /* ←ドットも大きく */
+      height: 28px;
+      background: #00bfff;
+      border-radius: 50%;
+      margin-right: 12px;
+      vertical-align: middle;
+      border: 3px solid #222;
+    }
+    .side-btn {
+      margin-top: 24px;
+      padding: 10px 28px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      box-shadow: 1px 1px 2px #ccc;
+    }
+    .side-btn:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="side-info">
+    <div>
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">空き</span>
+    </div>
+    <div style="margin: 18px 0 8px 0;">
+      空きシャワー数 <span id="free-count"></span>/30
+    </div>
+    <button class="side-btn">▶混雑予測を見る</button>
+  </div>
+  <div>
+    <h2 id="title" style="text-align:center;">座席マップ</h2>
+
+    <div class="room">
+      <!-- 左列：上3 -->
+      <div class="dot" style="top: 30px; left: 30px;"></div>
+      <div class="dot" style="top: 90px; left: 30px;"></div>
+      <div class="dot" style="top: 150px; left: 30px;"></div>
+
+      <!-- 壁 -->
+      <div class="wall" style="top: 210px; left: 28px; width: 48px; height: 48px;"></div>
+
+      <!-- 左列：下5 -->
+      <div class="dot" style="top: 270px; left: 30px;"></div>
+      <div class="dot" style="top: 330px; left: 30px;"></div>
+      <div class="dot" style="top: 390px; left: 30px;"></div>
+      <div class="dot" style="top: 450px; left: 30px;"></div>
+      <div class="dot" style="top: 510px; left: 30px;"></div>
+
+      <!-- 中央列セット① -->
+      <!-- 左縦4 -->
+      <div class="dot" style="top: 200px; left: 186px;"></div>
+      <div class="dot" style="top: 260px; left: 186px;"></div>
+      <div class="dot" style="top: 320px; left: 186px;"></div>
+      <div class="dot" style="top: 380px; left: 186px;"></div>
+
+      <!-- 壁 -->
+      <div class="wall" style="top: 205px; left: 240px; width: 35px; height: 224px;"></div>
+
+      <!-- 右縦4 -->
+      <div class="dot" style="top: 200px; left: 282px;"></div>
+      <div class="dot" style="top: 260px; left: 282px;"></div>
+      <div class="dot" style="top: 320px; left: 282px;"></div>
+      <div class="dot" style="top: 380px; left: 282px;"></div>
+
+      <!-- 中央列セット② -->
+      <!-- 左縦4 -->
+      <div class="dot" style="top: 200px; left: 378px;"></div>
+      <div class="dot" style="top: 260px; left: 378px;"></div>
+      <div class="dot" style="top: 320px; left: 378px;"></div>
+      <div class="dot" style="top: 380px; left: 378px;"></div>
+
+      <!-- 壁 -->
+      <div class="wall" style="top: 205px; left: 438px; width: 35px; height: 224px;"></div>
+
+      <!-- 右縦4 -->
+      <div class="dot" style="top: 200px; left: 486px;"></div>
+      <div class="dot" style="top: 260px; left: 486px;"></div>
+      <div class="dot" style="top: 320px; left: 486px;"></div>
+      <div class="dot" style="top: 380px; left: 486px;"></div>
+
+      <!-- 下段横6（さらに64px上にずらす） -->
+      <div class="dot" style="top: 506px; left: 186px;"></div>
+      <div class="dot" style="top: 506px; left: 246px;"></div>
+      <div class="dot" style="top: 506px; left: 306px;"></div>
+      <div class="dot" style="top: 506px; left: 366px;"></div>
+      <div class="dot" style="top: 506px; left: 426px;"></div>
+      <div class="dot" style="top: 506px; left: 486px;"></div>
+
+      <!-- 右壁 -->
+      <div class="wall hatched" style="top: 0; left: 700px; width: 300px; height: 200px;">
+        <!-- 四隅クリック領域（48x48px）-->
+        <div class="corner" id="corner-tl" style="top:0;left:0;"></div>
+        <div class="corner" id="corner-tr" style="top:0;right:0;"></div>
+        <div class="corner" id="corner-bl" style="bottom:0;left:0;"></div>
+        <div class="corner" id="corner-br" style="bottom:0;right:0;"></div>
+      </div>
+
+      <!-- おゆエリア -->
+      <div class="bath" style="top: 200px; left: 700px; width: 300px; height: 400px;">
+        <div class="label" style="top: 150px; left: 80px;">おゆ</div>
+      </div>
+
+      <!-- 入口 -->
+      <div class="label" style="top: 10px; left: 450px;">入口</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let isAdmin = false;
+
+  // 空き数を更新する関数
+  function updateFreeCount() {
+    const dots = document.querySelectorAll('.dot');
+    let free = 0;
+    let total = 0;
+    dots.forEach(dot => {
+      // ×が付いているものは最大値から除外
+      if (!dot.classList.contains('xmark')) {
+        total++;
+        if (!dot.classList.contains('red')) {
+          free++;
+        }
+      }
+    });
+    const ratio = total === 0 ? 0 : free / total;
+
+    // 空きシャワー数を更新
+    document.getElementById('free-count').textContent = free;
+    // 分母も「最大値から×を除外した数」に
+    document.getElementById('free-count').nextSibling.textContent = `/${total}`;
+
+    // 状態表示を割合で更新
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+    if (ratio > 0.75) {
+      statusText.textContent = '空き';
+      statusDot.style.background = '#00bfff'; // 水色
+    } else if (ratio > 0.5) {
+      statusText.textContent = 'やや空き';
+      statusDot.style.background = '#3cb371'; // 緑
+    } else if (ratio > 0.25) {
+      statusText.textContent = 'やや混雑';
+      statusDot.style.background = 'orange';
+    } else {
+      statusText.textContent = '混雑';
+      statusDot.style.background = 'red';
+    }
+  }
+
+  // 初期表示
+  updateFreeCount();
+
+  document.querySelectorAll('.dot').forEach(dot => {
+    let redTimeout = null; // タイマーを個別に管理
+    dot.addEventListener('click', () => {
+      if (isAdmin) {
+        dot.classList.toggle('xmark');
+        updateFreeCount();
+      } else {
+        if (!dot.classList.contains('xmark') && !dot.classList.contains('red')) {
+          dot.classList.add('red');
+          updateFreeCount();
+          redTimeout = setTimeout(() => {
+            dot.classList.remove('red');
+            updateFreeCount();
+            redTimeout = null;
+          }, 3000);
+        }
+      }
+    });
+  });
+
+  // 四隅全部を押すことで管理者モード
+  const cornerIds = ['corner-tl','corner-tr','corner-bl','corner-br'];
+  let pressed = { 'corner-tl': false, 'corner-tr': false, 'corner-bl': false, 'corner-br': false };
+  let adminTimer = null;
+  cornerIds.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('click', () => {
+      pressed[id] = true;
+      if (adminTimer === null) {
+        adminTimer = setTimeout(() => {
+          pressed = { 'corner-tl': false, 'corner-tr': false, 'corner-bl': false, 'corner-br': false };
+          adminTimer = null;
+        }, 4000);
+      }
+      if (Object.values(pressed).every(v => v)) {
+        clearTimeout(adminTimer);
+        isAdmin = true;
+        document.getElementById('title').textContent = '管理者モード';
+        pressed = { 'corner-tl': false, 'corner-tr': false, 'corner-bl': false, 'corner-br': false };
+        adminTimer = null;
+      }
+    });
+  });
+
+  // おゆエリアを押すと管理者モード解除
+  document.querySelector('.bath').addEventListener('click', () => {
+    if (isAdmin) {
+      isAdmin = false;
+      document.getElementById('title').textContent = '座席マップ';
+    }
+  });
+</script>
+
+</body>
+</html>
